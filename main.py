@@ -3,6 +3,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
+import pymysql
+import os
 from dotenv import load_dotenv
 
 
@@ -10,14 +12,75 @@ load_dotenv()
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://DB_USERNAME:DB_PASSWORD@DB_HOST/DB_NAME'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy()
-db.init_app(app)
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://DB_USERNAME:DB_PASSWORD@DB_HOST/DB_NAME'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db = SQLAlchemy()
+# db.init_app(app)
+
+# Database connection configuration
+DB_USERNAME = os.getenv('DB_USERNAME')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_HOST = os.getenv('DB_HOST')
+# DB_NAME = os.getenv('DB_NAME')
+
+# Establish a database connection
+def get_db_connection():
+    connection = pymysql.connect(
+        host=DB_HOST,
+        user=DB_USERNAME,
+        password=DB_PASSWORD,
+        database="music_management",
+          port=3305
+    )
+    return connection
+def create_table():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        # Raw SQL to create a table
+        create_table_query =  """
+        CREATE TABLE IF NOT EXISTS user (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            first_name VARCHAR(255) NOT NULL,
+            last_name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            password VARCHAR(500) NOT NULL,
+            phone VARCHAR(20),
+            dob DATETIME,
+            gender ENUM('m', 'f', 'o') DEFAULT 'o',
+            address VARCHAR(255),
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        );
+        """
+        cursor.execute(create_table_query)
+        connection.commit()
+        print("Table 'User' created successfully!")
+        cursor.close()
+        connection.close()
+    except Exception as e:
+        print( f"An error occurred: {e}")
+ 
+      
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @app.route('/',methods=['GET','POST'])
 def register():
+    create_table()
+    print(DB_PASSWORD)
     if request.method == "POST":
             pass
             # # user_name = request.form["name"]
