@@ -1,18 +1,64 @@
 {% extends "base.html" %} {% block content %}
 <div class="box">
+  {% with messages= get_flashed_messages()%} {%if messages%} {%for message in
+    messages%}
+    <p>{{message}}</p>
+    {%endfor%} {%endif%} {%endwith%}
   <h1>Register</h1>
   <form action="{{ url_for('register') }}" method="post">
-    <input type="text" name="name" placeholder="Name" required="required" />
+    <input type="text" name="FirstName" placeholder="FirstName" required="required" />
+    <input type="text" name="LastName" placeholder="LastName" required="required" />
     <input type="email" name="email" placeholder="Email" required="required" />
+    <input type="text" name="Address" placeholder="Address" required="required" />
+    <input 
+    type="tel" 
+    name="Phone" 
+    placeholder="Phone Number" 
+    required 
+    pattern="\d{10}" 
+    title="Phone number must be exactly 10 digits" 
+/>
+
+
+
     <input
       type="password"
       name="password"
       placeholder="Password"
       required="required"
     />
+    <input type="date" name="date_of_birth">
+    <label class="text-white">Gender</label>
+    <span style="display: flex;" class="text-white">
+      <span>
+    <input type="radio" id="male" name="gender" value="m">
+    <label  for="male">Male</label>
+  </span>
+  <span>
+    <input type="radio" id="female" name="gender" value="f">
+    <label for="female">Female</label>
+  </span>
+  <span>
+    <input type="radio" id="others" name="gender" value="o">
+    <label for="others">Others</label>
+  </span>
+  </span>
+  <br>
     <button type="submit" class="btn btn-primary btn-block btn-large">
       Sign me up.
     </button>
   </form>
 </div>
 {% endblock %}
+
+<script>
+  document.querySelector("form").addEventListener("submit", function (event) {
+    const phoneInput = document.querySelector('input[name="Phone"]');
+    const phoneValue = phoneInput.value;
+
+    if (!/^\d{10}$/.test(phoneValue)) {
+        alert("Phone number must be exactly 10 digits.");
+        event.preventDefault(); 
+    }
+});
+</script>
