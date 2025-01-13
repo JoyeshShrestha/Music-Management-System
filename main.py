@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
+
 import pymysql
 import os
 from dotenv import load_dotenv
@@ -15,20 +16,17 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://DB_USERNAME:DB_PASSWORD@DB_HOST/DB_NAME'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db = SQLAlchemy()
-# db.init_app(app)
 
 # Database connection configuration
 DB_USERNAME = os.getenv('DB_USERNAME')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST')
-# DB_NAME = os.getenv('DB_NAME')
+
 
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
 login_manager.login_view = "login"
 
 @login_manager.user_loader
@@ -189,11 +187,42 @@ def get_data_users():
                  
 
 
+def delete_user_query(user_id):
+    try:
+        # Establish database connection
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        # Use parameterized queries to prevent SQL injection
+        delete_table_query = """
+        DELETE FROM user where id = %s ;
+        """
+
+        # Execute the query with parameters
+        cursor.execute(delete_table_query, (user_id,))
+
+
+        # Commit the transaction
+        connection.commit()
+
+        
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+    
+        return True
+
+    except Exception as e:
+        # Handle exceptions and flash error message
+        flash(f"An error occurred: {e}")
+        return redirect(url_for("get_all_users"))
+
 
 @app.route('/',methods=['GET','POST'])
 def register():
-    # create_table()
-    print(DB_PASSWORD)
+  
     if request.method == "POST":
          
         # try:
@@ -221,28 +250,7 @@ def register():
 
             insert_data_user(first_name,last_name,date_of_birth,gender,email,password,phone,address)
 
-        #  try:
-        #      email = request.form.get('email')
-        #      result = db.session.execute(db.select(User).where(User.email == email))
-        #      user = result.scalar()
-        #      if user:
-        #          flash("You've already signed up with that email, log in instead!")
-        #          return redirect(url_for('login'))
-        #      register = User(
-        #      name = user_name,
-        #      email = email,
-        #      password = generate_password_hash(request.form["password"],method='pbkdf2:sha256',salt_length=8)
-        #         )
-        #      db.session.add(register)
-        #      db.session.commit()
-        #  except:
-        #      return redirect(url_for("login"))
-
-        #     login_user(register)
-        #  return redirect(url_for("secrets",name=user_name))
-
-            
-    # return render_template("register.html",logged_in=current_user.is_authenticated)
+            return render_template("login.html")
     return render_template("register.html")
 
 
@@ -265,7 +273,6 @@ def login():
 
         # Log in the user
         login_user(user)
-        flash("Logged in successfully!")
         return redirect(url_for('dashboard'))  
 
     return render_template("login.html")
@@ -275,7 +282,8 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return render_template("login.html",logged_in=False)
+    print("User logged out")
+    return redirect(url_for('login'))
 
 @app.route('/dashboard')
 @login_required
@@ -292,10 +300,14 @@ def get_all_users():
     if current_user.is_authenticated:
         return render_template("user.html", all_users=users,logged_in = current_user.is_authenticated,login_id = current_user.id)
 
-    return render_template("user.html", all_users=users,logged_in = current_user.is_authenticated)
+    return render_template("login.html", all_users=users,logged_in = current_user.is_authenticated)
 
 
-
+@app.route('/dashboard/users/delete/<int:user_id>')
+@login_required
+def delete_user(user_id):
+    delete_user_query(user_id)
+    return redirect(url_for('get_all_users'))
 
 if __name__=="__main__":
     app.run(debug=True)

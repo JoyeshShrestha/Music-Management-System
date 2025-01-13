@@ -1,10 +1,22 @@
-{% extends "base.html" %} {% block content %} {% for user in all_users %}
-<div class="post-preview">
-    <h2 class="user-title">{{ user.first_name }} {{ user.last_name }}</h2>
-    <h3 class="user-subtitle">{{ user.email }}</h3>
-  </a>
+{% extends "base.html" %} {% block content %} 
+<h1 class="page-title">USERS</h1>
+{% with messages= get_flashed_messages()%} {%if messages%}
+<p>{{messages[-1]}}</p>
+{%endif%} {%endwith%}
+<div class="display_user">
+  {% for user in all_users %}
+  <div class="user-preview">
+    <p class="user-title">{{ user.first_name }} {{ user.last_name }}</p>
+    <p class="user-subtitle">{{ user.email }}</p>
+    <p class="user-details"><strong>Phone:</strong> {{ user.phone }}</p>
+    <p class="user-details"><strong>Address:</strong> {{ user.address }}</p>
+    <p class="user-details"><strong>Gender:</strong> {{ user.gender }}</p>
+    <p class="user-details"><strong>Date of Birth:</strong> {{ user.dob }}</p>
+  <p>
+    <a class="btn btn-outline-primary">Edit</a>
+  <a class="btn btn-outline-danger"  href="{{url_for('delete_user', user_id=user.id)}}">Delete</a>
+</p>
+  </div>
+  {% endfor %}
 </div>
-<!-- Divider-->
-<hr class="my-4" style="background-color: #1ED760;"/>
-{% endfor %}
 {% endblock %}

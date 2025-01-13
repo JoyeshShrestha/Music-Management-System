@@ -4,9 +4,9 @@
   <ul>
     <li><a href="#home">Dashboard</a></li>
 
-    <li><a href="#home">Users</a></li>
+    <li><a href="{{url_for('get_all_users')}}">Users</a></li>
     <li><a href="#about">Artists</a></li>
   </ul>
-  <div class="logout"><a href="{{url_for('register')}}">Logout</a></div>
+  <div class="logout"><a href="{{url_for('logout')}}">Logout</a></div>
 </nav>
 {% endblock %}
