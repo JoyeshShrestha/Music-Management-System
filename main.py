@@ -7,7 +7,7 @@ import pymysql
 import os
 from dotenv import load_dotenv
 from user import User
-
+from pymysql.cursors import DictCursor
 
 load_dotenv()
 
@@ -155,7 +155,38 @@ def insert_data_user(first_name, last_name, date_of_birth, gender, email, passwo
                  
 
 
+def get_data_users():
+    try:
+        # Establish database connection
+        connection = get_db_connection()
+        cursor = connection.cursor(DictCursor)
 
+        # Use parameterized queries to prevent SQL injection
+        select_table_query = """
+        SELECT * FROM user ;
+        """
+
+        # Execute the query with parameters
+        cursor.execute(select_table_query)
+
+        # Commit the transaction
+        connection.commit()
+        all_users_tuple = cursor.fetchall()
+
+        
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+    
+        return all_users_tuple
+
+    except Exception as e:
+        # Handle exceptions and flash error message
+        flash(f"An error occurred: {e}")
+        return redirect(url_for("register"))
+                 
 
 
 
@@ -239,10 +270,32 @@ def login():
 
     return render_template("login.html")
 
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return render_template("login.html",logged_in=False)
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
     return render_template("dashboard.html", user_email = current_user.email, logged_in=True)    
+
+
+
+@app.route('/dashboard/users')
+@login_required
+def get_all_users():
+    
+    users = get_data_users()    
+    if current_user.is_authenticated:
+        return render_template("user.html", all_users=users,logged_in = current_user.is_authenticated,login_id = current_user.id)
+
+    return render_template("user.html", all_users=users,logged_in = current_user.is_authenticated)
+
+
+
 
 if __name__=="__main__":
     app.run(debug=True)

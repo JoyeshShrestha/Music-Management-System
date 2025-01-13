@@ -10,12 +10,21 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
     <link
+      href="https://fonts.googleapis.com/css2?family=Monoton&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins"
+      rel="stylesheet"
+    />
+    <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css')}}"
     />
   </head>
 
   <body>
-    {% block content %} {% endblock %}
+    <header>{% include "nav.html" %}</header>
+    <main>{% block content %} {% endblock %}</main>
   </body>
 </html>

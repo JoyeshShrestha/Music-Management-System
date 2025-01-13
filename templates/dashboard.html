@@ -1,1 +1,16 @@
-hello {{user_email}}
+{% extends "base.html" %} {% block content %} 
+ 
+<h2 class="mt-4"><span style="font-style: italic; color: #1ED760;">hello</span> {{user_email}},<span style="font-style: italic; color: #1ED760;"> welcome to <span class="logo" style="font-style:normal; font-size: 1.2rem ";> TUNE</span> Dashboard</span>   </h2>
+
+
+<div class="container justify-content-center">
+    <div class="row">
+        <div class="col selection_box mx-4 p-4">Users</div>
+        <div class="col selection_box mx-4 p-4">Artists</div>
+
+    </div>
+</div>
+<!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROuBNBcOFFjXIkz4EkF_AyxysJil8Vldwb-Q&usqp=CAU" alt="album art" class="art"> -->
+
+
+{% endblock%}

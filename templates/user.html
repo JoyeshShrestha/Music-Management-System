@@ -1,0 +1,10 @@
+{% extends "base.html" %} {% block content %} {% for user in all_users %}
+<div class="post-preview">
+    <h2 class="user-title">{{ user.first_name }} {{ user.last_name }}</h2>
+    <h3 class="user-subtitle">{{ user.email }}</h3>
+  </a>
+</div>
+<!-- Divider-->
+<hr class="my-4" style="background-color: #1ED760;"/>
+{% endfor %}
+{% endblock %}
