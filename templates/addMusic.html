@@ -1,0 +1,55 @@
+{% extends "base.html" %} {% block content %}
+<div class="add_user_body">
+  <script>
+    document.querySelector(".login-body").style.backgroundColor = "";
+  </script>
+  <div class="register-box">
+    {% with messages= get_flashed_messages()%} {%if messages%}
+    <p>{{messages[-1]}}</p>
+    {%endif%} {%endwith%}
+    <h1>Add Music</h1>
+    <form action="{{ url_for('add_music',artist_id=artist_id) }}" method="post">
+      <input type="text" name="title" placeholder="Title" required="required" />
+
+      <input
+        type="text"
+        name="Album_name"
+        placeholder="Album Name"
+        required="required"
+      />
+
+      <label class="text-white">Genre</label>
+      <span style="display: flex" class="text-white">
+        <span>
+          <input type="radio" id="rnb" name="genre" value="rnb" />
+          <label for="rnb">RnB</label>
+        </span>
+        <span>
+          <input type="radio" id="country" name="genre" value="country" />
+          <label for="country">Country</label>
+        </span>
+        <span>
+          <input type="radio" id="classic" name="genre" value="classic" />
+          <label for="classic">Classic</label>
+        </span>
+        <span>
+          <input type="radio" id="rock" name="genre" value="rock" />
+          <label for="rock">Rock</label>
+        </span>
+        <span>
+          <input type="radio" id="jazz" name="genre" value="jazz" />
+          <label for="jazz">Jazz</label>
+        </span>
+      </span>
+      <br />
+      <button type="submit" class="btn btn-primary btn-block btn-large">
+        Add New Music
+      </button>
+      <p class="my-3">
+        <a href="{{url_for('get_all_musics',artist_id=artist_id)}}">Go Back</a>
+      </p>
+    </form>
+  </div>
+</div>
+
+{%endblock%}

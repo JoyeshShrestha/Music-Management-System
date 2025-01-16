@@ -1,0 +1,86 @@
+{% extends "base.html" %} {% block content %}
+<div class="add_user_body">
+  <script>
+    document.querySelector(".login-body").style.backgroundColor = "";
+  </script>
+  <div class="register-box">
+    {% with messages= get_flashed_messages()%} {%if messages%}
+    <p>{{messages[-1]}}</p>
+    {%endif%} {%endwith%}
+    <h1>Edit Music for {{music.title}}</h1>
+    <form
+      action="{{ url_for('edit_music',artist_id=artist_id,music_id = music_id) }}"
+      method="post"
+    >
+      <label>Title</label>
+      <input
+        type="text"
+        name="title"
+        placeholder="Title"
+        value="{{music.title}}"
+        required="required"
+      />
+      <label>Album_name</label>
+
+      <input
+        type="text"
+        name="Album_name"
+        placeholder="Album Name"
+        required="required"
+        value="{{music.album_name}}"
+      />
+
+      <label class="text-white">Genre</label>
+      <span style="display: flex" class="text-white">
+        <span>
+          <input type="radio" id="rnb" name="genre" value="rnb" />
+          <label for="rnb">RnB</label>
+        </span>
+        <span>
+          <input type="radio" id="country" name="genre" value="country" />
+          <label for="country">Country</label>
+        </span>
+        <span>
+          <input type="radio" id="classic" name="genre" value="classic" />
+          <label for="classic">Classic</label>
+        </span>
+        <span>
+          <input type="radio" id="rock" name="genre" value="rock" />
+          <label for="rock">Rock</label>
+        </span>
+        <span>
+          <input type="radio" id="jazz" name="genre" value="jazz" />
+          <label for="jazz">Jazz</label>
+        </span>
+      </span>
+      <br />
+      <script>
+        const genderRadio = document.querySelector(
+          `input[name="genre"][value="{{music.genre}}"]`
+        );
+        if (genderRadio) {
+          genderRadio.checked = true;
+        }
+      </script>
+      <button type="submit" class="btn btn-primary btn-block btn-large">
+        Edit Music
+      </button>
+      <p class="my-3">
+        <a href="{{url_for('get_all_musics',artist_id=artist_id)}}">Go Back</a>
+      </p>
+    </form>
+  </div>
+</div>
+
+{%endblock%}
+<script>
+  document.querySelector("form").addEventListener("submit", function (event) {
+    const phoneInput = document.querySelector('input[name="Phone"]');
+    const phoneValue = phoneInput.value;
+
+    if (!/^\d{10}$/.test(phoneValue)) {
+      alert("Phone number must be exactly 10 digits.");
+      event.preventDefault();
+    }
+  });
+</script>

@@ -7,6 +7,8 @@ from db import get_db_connection
 
 from user_db import User_db
 from artist_db import Artist_db
+from music_db import Music_db
+
 from user import User
 import os
 from dotenv import load_dotenv
@@ -18,7 +20,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 user_db =User_db()
 artist_db = Artist_db()
-
+music_db= Music_db()
 load_dotenv()
 
 
@@ -51,6 +53,10 @@ def load_user(user_id):
         print(f"An error occurred: {e}")
         return None
 
+
+
+
+# ------------------LOGIN LOGOUT REGISTER----------------------------------------------------------------------------------------------
 
 
 @app.route('/',methods=['GET','POST'])
@@ -126,13 +132,7 @@ def dashboard():
 
 
 
-@app.route('/dashboard/users/delete/<int:user_id>')
-@login_required
-def delete_user(user_id):
-    user_db.delete_user_query(user_id)
-    return redirect(url_for('get_all_users'))
-
-
+# ------------------USER----------------------------------------------------------------------------------------------
 
 @app.route('/dashboard/users')
 @login_required
@@ -148,6 +148,16 @@ def get_all_users():
         total_pages=total_pages)
 
     return render_template("login.html", all_users=users,logged_in = current_user.is_authenticated)
+
+@app.route('/dashboard/users/delete/<int:user_id>')
+@login_required
+def delete_user(user_id):
+    user_db.delete_user_query(user_id)
+    return redirect(url_for('get_all_users'))
+
+
+
+
 
 
 @app.route('/dashboard/users/adduser',methods=['GET','POST'])
@@ -210,6 +220,7 @@ def edit_user(user_id):
     print(user['email'])
     return render_template("edituser.html", user=user)
 
+# ------------------ARTIST----------------------------------------------------------------------------------------------
 
 
 @app.route('/dashboard/artists')
@@ -297,6 +308,85 @@ def edit_artist(artist_id):
 
     
     return render_template("editartist.html", artist=artist)
+
+# ------------------MUSIC----------------------------------------------------------------------------------------------
+
+
+@app.route('/dashboard/artists/<int:artist_id>/music')
+@login_required
+def get_all_musics(artist_id):
+   
+    if current_user.is_authenticated:
+        page = request.args.get('page', 1, type=int)
+        per_page = 4
+        musics, total_musics, artist = music_db.get_data_musics(page,per_page,artist_id)    
+        total_pages = (total_musics + per_page - 1) // per_page
+        print(musics)
+        return render_template("music.html", all_musics=musics,logged_in = current_user.is_authenticated,login_id = current_user.id,current_page=page,total_pages=total_pages,artist_name =artist,artist_id=artist_id)
+
+    return render_template("dashboard.html", logged_in = current_user.is_authenticated)
+
+
+@app.route('/dashboard/artists/<int:artist_id>/music/addmusic',methods=['GET','POST'])
+@login_required
+def add_music(artist_id):
+    
+    if request.method == "POST":
+         
+        # try:
+            title=request.form.get('title')
+
+            artist = music_db.check_music_exists(title,artist_id)
+
+            if artist:
+                flash("This name exists already!")
+
+                return redirect(url_for("add_artist"))
+
+            
+            
+            album_name = request.form["Album_name"]
+            genre = request.form["genre"]
+            
+            
+
+            music_db.insert_data_music(title,album_name,genre,artist_id)
+
+            return redirect(url_for("get_all_musics",artist_id=artist_id))
+
+    return render_template("addMusic.html",artist_id=artist_id)
+
+
+@app.route('/dashboard/artist/<int:artist_id>/music/delete/<int:music_id>')
+@login_required
+def delete_music(artist_id,music_id):
+    music_db.delete_music_query(artist_id,music_id)
+    return redirect(url_for('get_all_musics',artist_id=artist_id))
+
+@app.route('/dashboard/artists/<int:artist_id>/music/update/<int:music_id>',methods=['GET','POST'])
+@login_required
+def edit_music(artist_id,music_id):
+    
+    music = music_db.get_music_data(artist_id,music_id)
+    print("hello",music)
+
+    if request.method == "POST":
+            title=request.form.get('title')
+
+            
+            
+            album_name = request.form["Album_name"]
+            genre = request.form["genre"]
+       
+
+            music_db.update_data_music(artist_id,music_id,title,album_name,genre)
+
+            return redirect(url_for("get_all_musics",artist_id=artist_id))
+
+    
+    return render_template("editmusic.html", artist_id=artist_id,music=music,music_id=music_id)
+
+
 
 
 if __name__=="__main__":
