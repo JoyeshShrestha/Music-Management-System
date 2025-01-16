@@ -1,0 +1,59 @@
+{% extends "base.html" %} {% block content %}
+<div class="add_user_body">
+  <script>
+    document.querySelector(".login-body").style.backgroundColor = "";
+  </script>
+  <div class="register-box">
+    {% with messages= get_flashed_messages()%} {%if messages%}
+    <p>{{messages[-1]}}</p>
+    {%endif%} {%endwith%}
+    <h1>Add Artist</h1>
+    <form action="{{ url_for('add_artist') }}" method="post">
+      <input type="text" name="Name" placeholder="Name" required="required" />
+
+      <input
+        type="text"
+        name="Address"
+        placeholder="Address"
+        required="required"
+      />
+      <input
+        type="number"
+        name="first_release"
+        placeholder="First Release Year"
+        required="required"
+      />
+      <input
+        type="number"
+        name="number_albums"
+        placeholder="No. of Albums"
+        required="required"
+      />
+      <input type="date" name="date_of_birth" />
+      <label class="text-white">Gender</label>
+      <span style="display: flex" class="text-white">
+        <span>
+          <input type="radio" id="male" name="gender" value="m" />
+          <label for="male">Male</label>
+        </span>
+        <span>
+          <input type="radio" id="female" name="gender" value="f" />
+          <label for="female">Female</label>
+        </span>
+        <span>
+          <input type="radio" id="others" name="gender" value="o" />
+          <label for="others">Others</label>
+        </span>
+      </span>
+      <br />
+      <button type="submit" class="btn btn-primary btn-block btn-large">
+        Add New Artists
+      </button>
+      <p class="my-3">
+        <a href="{{url_for('get_all_users')}}">Go Back</a>
+      </p>
+    </form>
+  </div>
+</div>
+
+{%endblock%}

@@ -1,0 +1,56 @@
+{% extends "base.html" %} {% block content %} 
+<div style="display: flex; justify-content: space-between; justify-items: center; padding: 20px;">
+  
+<h1 class="page-title">Artists</h1>
+<div><a class="btn btn-success" href="{{ url_for('add_artist') }}">Add Artist</a>
+</div>
+</div>
+
+{% with messages= get_flashed_messages()%} {%if messages%}
+<p>{{messages[-1]}}</p>
+{%endif%} {%endwith%}
+  <div class="mb-4">
+    {% if current_page > 1 %}
+      <a class="btn btn-small btn-outline-dark" href="{{ url_for('get_all_users', page=current_page - 1) }}">Previous</a>
+    {% endif %}
+  
+    {% if current_page < total_pages %}
+    <a class="btn btn-small btn-outline-dark" href="{{ url_for('get_all_users', page=current_page + 1) }}">Next</a>
+  {% endif %}
+     </div>
+<div class="display_user">
+        
+         {% for artist in all_artists %}
+         <div class="user-preview">
+           <p class="user-title">{{ artist.name }}</p>
+           <p class="user-subtitle">{{ artist.first_release_year }}</p>
+           <p class="user-details"><strong>No. of Albums:</strong> {{ artist.no_of_albums_released}}</p>
+
+           <p class="user-details"><strong>Address:</strong> {{ artist.address }}</p>
+           <p class="user-details"><strong>Gender:</strong> {{ artist.gender }}</p>
+           <p class="user-details"><strong>Date of Birth:</strong> {{ artist.dob }}</p>
+        
+           <p>
+            <a class="btn btn-outline-primary" href="{{ url_for('edit_artist',artist_id=artist.id)}}">Edit</a>
+          <a class="btn btn-outline-danger"  href="{{url_for('delete_artist',artist_id=artist.id)}}">Delete</a>
+        </p>
+      
+         </div>
+         
+         
+      </a>
+    {% endfor %}
+  
+    
+  </div>
+  <div class="mt-4">
+    {% if current_page > 1 %}
+      <a class="btn btn-small btn-outline-dark" href="{{ url_for('get_all_users', page=current_page - 1) }}">Previous</a>
+    {% endif %}
+  
+    {% if current_page < total_pages %}
+    <a class="btn btn-small btn-outline-dark" href="{{ url_for('get_all_users', page=current_page + 1) }}">Next</a>
+  {% endif %}
+     </div>
+</div>
+{% endblock %}

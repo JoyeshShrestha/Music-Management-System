@@ -3,24 +3,23 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
+from db import get_db_connection
 
-import pymysql
+from user_db import User_db
+from artist_db import Artist_db
+from user import User
 import os
 from dotenv import load_dotenv
-from user import User
-from pymysql.cursors import DictCursor
-
-load_dotenv()
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 
-# Database connection configuration
-DB_USERNAME = os.getenv('DB_USERNAME')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_HOST = os.getenv('DB_HOST')
+user_db =User_db()
+artist_db = Artist_db()
+
+load_dotenv()
 
 
 
@@ -52,247 +51,7 @@ def load_user(user_id):
         print(f"An error occurred: {e}")
         return None
 
-# Establish a database connection
-def get_db_connection():
-    connection = pymysql.connect(
-        host=DB_HOST,
-        user=DB_USERNAME,
-        password=DB_PASSWORD,
-        database="music_management",
-          port=3305
-    )
-    return connection
-def create_table():
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
 
-        # Raw SQL to create a table
-        create_table_query =  """
-        CREATE TABLE IF NOT EXISTS user (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            first_name VARCHAR(255) NOT NULL,
-            last_name VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL UNIQUE,
-            password VARCHAR(500) NOT NULL,
-            phone VARCHAR(20),
-            dob DATETIME,
-            gender ENUM('m', 'f', 'o') DEFAULT 'o',
-            address VARCHAR(255),
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        );
-        """
-        cursor.execute(create_table_query)
-        connection.commit()
-        print("Table 'User' created successfully!")
-        cursor.close()
-        connection.close()
-    except Exception as e:
-        print( f"An error occurred: {e}")
- 
-      
-
-
-
-
-def check_email_exists(email):
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-
-        # Use a parameterized query to prevent SQL injection
-        check_email_query = "SELECT * FROM user WHERE email = %s"
-        cursor.execute(check_email_query, (email,))
-
-        # Fetch the first matching user
-        user_tuple = cursor.fetchone()
-
-        cursor.close()
-        connection.close()
-
-        # Return True if user exists, otherwise False
-        if user_tuple:
-            return User.from_tuple(user_tuple)
-        return None
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return False
-
-def update_data_user(id,first_name,last_name,date_of_birth,gender,email,password,phone,address):
-    try:
-        # Establish database connection
-        connection = get_db_connection()
-        cursor = connection.cursor()
-
-        # Use parameterized queries to prevent SQL injection
-        update_user_query = """
-                                UPDATE user
-                                SET first_name = %s,
-                                    last_name = %s,
-                                    email = %s,
-                                    password = %s,
-                                    phone = %s,
-                                    dob = %s,
-                                    gender = %s,
-                                    address = %s
-                                WHERE id = %s;
-                                """
-
-
-        # Execute the query with parameters
-        cursor.execute(update_user_query, (first_name, last_name, email, password, phone, date_of_birth, gender, address, id))
-
-        # Commit the transaction
-        connection.commit()
-
-        # Close the cursor and connection
-        cursor.close()
-        connection.close()
-
-        # Flash success message and redirect to login
-        flash("User edited successfully!")
-        return redirect(url_for("get_all_users"))
-
-
-    except Exception as e:
-        # Handle exceptions and flash error message
-        flash(f"An error occurred: {e}")
-        return redirect(url_for("get_all_users"))
-
-
-
-def insert_data_user(first_name, last_name, date_of_birth, gender, email, password, phone, address):
-    try:
-        # Establish database connection
-        connection = get_db_connection()
-        cursor = connection.cursor()
-
-        # Use parameterized queries to prevent SQL injection
-        insert_table_query = """
-        INSERT INTO user (first_name, last_name, email, password, phone, dob, gender, address)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
-        """
-
-        # Execute the query with parameters
-        cursor.execute(insert_table_query, (first_name, last_name, email, password, phone, date_of_birth, gender, address))
-
-        # Commit the transaction
-        connection.commit()
-
-        # Close the cursor and connection
-        cursor.close()
-        connection.close()
-
-        # Flash success message and redirect to login
-        flash("User inserted successfully!")
-        return True
-
-    except Exception as e:
-        # Handle exceptions and flash error message
-        flash(f"An error occurred: {e}")
-        return False
-                 
-
-
-def get_data_users(page,per_page):
-    try:
-        # Establish database connection
-        connection = get_db_connection()
-        cursor = connection.cursor(DictCursor)
-        cursors = connection.cursor()
-
-        offset = (page - 1) * per_page
-        query = "SELECT * FROM user LIMIT %s OFFSET %s"
-        
-        # Execute query with the limit and offset
-        cursor.execute(query, (per_page, offset))
-        users = cursor.fetchall()
-
-        # Count total users
-        total_query = "SELECT COUNT(*) FROM user"
-        cursors.execute(total_query)
-        total_users =  cursors.fetchone()[0]
-
-
-        # Close the cursor and connection
-        cursor.close()
-        connection.close()
-
-    
-        return users, total_users
-
-
-    except Exception as e:
-        # Handle exceptions and flash error message
-        flash(f"An error occurred: {e}")
-        return redirect(url_for("register"))
-                 
-
-
-def delete_user_query(user_id):
-    try:
-        # Establish database connection
-        connection = get_db_connection()
-        cursor = connection.cursor()
-
-        # Use parameterized queries to prevent SQL injection
-        delete_table_query = """
-        DELETE FROM user where id = %s ;
-        """
-
-        # Execute the query with parameters
-        cursor.execute(delete_table_query, (user_id,))
-
-
-        # Commit the transaction
-        connection.commit()
-
-        
-
-        # Close the cursor and connection
-        cursor.close()
-        connection.close()
-
-    
-        return True
-
-    except Exception as e:
-        # Handle exceptions and flash error message
-        flash(f"An error occurred: {e}")
-        return redirect(url_for("get_all_users"))
-
-def get_user_data(user_id):
-    try:
-        # Establish database connection
-        connection = get_db_connection()
-        cursor = connection.cursor(DictCursor)
-
-        # Use parameterized queries to prevent SQL injection
-        select_table_query = """
-        SELECT * FROM user WHERE id = %s ;
-        """
-
-        # Execute the query with parameters
-        cursor.execute(select_table_query,user_id)
-
-        # Commit the transaction
-        connection.commit()
-        user_tuple = cursor.fetchone()
-
-        
-
-        # Close the cursor and connection
-        cursor.close()
-        connection.close()
-
-    
-        return user_tuple
-
-    except Exception as e:
-        # Handle exceptions and flash error message
-        flash(f"An error occurred: {e}")
-        return redirect(url_for("get_all_users"))
 
 @app.route('/',methods=['GET','POST'])
 def register():
@@ -302,7 +61,7 @@ def register():
         # try:
             email=request.form.get('email')
 
-            user = check_email_exists(email)
+            user = user_db.check_email_exists(email)
 
             if user:
                 flash("You've already signed up with that email, log in instead!")
@@ -317,12 +76,12 @@ def register():
             gender = request.form["gender"]
             phone = request.form["Phone"]
             if not phone.isdigit() or len(phone) != 10:
-                flash(f"An error occurred: {e}")
+                flash(f"An error occurred")
                 return redirect(url_for("register"))
             address = request.form["Address"]
             password = generate_password_hash(request.form["password"],method='pbkdf2:sha256',salt_length=8)
 
-            is_insert = insert_data_user(first_name,last_name,date_of_birth,gender,email,password,phone,address)
+            is_insert = user_db.insert_data_user(first_name,last_name,date_of_birth,gender,email,password,phone,address)
             if is_insert:
                 return render_template("login.html")
     return render_template("register.html")
@@ -335,7 +94,7 @@ def login():
         password = request.form.get('password')
        
      
-        user = check_email_exists(email)
+        user = user_db.check_email_exists(email)
         if not user:
             flash("That email does not exist, please try again.")
             return redirect(url_for('login'))
@@ -370,7 +129,7 @@ def dashboard():
 @app.route('/dashboard/users/delete/<int:user_id>')
 @login_required
 def delete_user(user_id):
-    delete_user_query(user_id)
+    user_db.delete_user_query(user_id)
     return redirect(url_for('get_all_users'))
 
 
@@ -382,7 +141,7 @@ def get_all_users():
     if current_user.is_authenticated:
         page = request.args.get('page', 1, type=int)
         per_page = 4
-        users, total_users = get_data_users(page,per_page)    
+        users, total_users = user_db.get_data_users(page,per_page)    
         total_pages = (total_users + per_page - 1) // per_page
         print(current_user.id)
         return render_template("user.html", all_users=users,logged_in = current_user.is_authenticated,login_id = current_user.id,current_page=page,
@@ -400,7 +159,7 @@ def add_user():
         # try:
             email=request.form.get('email')
 
-            user = check_email_exists(email)
+            user = user_db.check_email_exists(email)
 
             if user:
                 flash("You've already signed up with that email, log in instead!")
@@ -415,12 +174,12 @@ def add_user():
             gender = request.form["gender"]
             phone = request.form["Phone"]
             if not phone.isdigit() or len(phone) != 10:
-                flash(f"An error occurred: {e}")
+                flash(f"An error occurred")
                 return redirect(url_for("register"))
             address = request.form["Address"]
             password = generate_password_hash(request.form["password"],method='pbkdf2:sha256',salt_length=8)
 
-            insert_data_user(first_name,last_name,date_of_birth,gender,email,password,phone,address)
+            user_db.insert_data_user(first_name,last_name,date_of_birth,gender,email,password,phone,address)
 
             return redirect(url_for("get_all_users"))
 
@@ -431,7 +190,7 @@ def add_user():
 @login_required
 def edit_user(user_id):
     
-    user = get_user_data(user_id)
+    user = user_db.get_user_data(user_id)
 
     if request.method == "POST":
 
@@ -442,7 +201,7 @@ def edit_user(user_id):
         phone = request.form["Phone"]
         address = request.form["Address"]
 
-        update_data_user(user_id,first_name,last_name,date_of_birth,gender,user['email'],user['password'],phone,address)
+        user_db.update_data_user(user_id,first_name,last_name,date_of_birth,gender,user['email'],user['password'],phone,address)
 
         return redirect(url_for("get_all_users"))
 
@@ -450,6 +209,94 @@ def edit_user(user_id):
     
     print(user['email'])
     return render_template("edituser.html", user=user)
+
+
+
+@app.route('/dashboard/artists')
+@login_required
+def get_all_artists():
+   
+    if current_user.is_authenticated:
+        page = request.args.get('page', 1, type=int)
+        per_page = 4
+        artists, total_artists = artist_db.get_data_artists(page,per_page)    
+        total_pages = (total_artists + per_page - 1) // per_page
+        print(artists)
+        return render_template("artist.html", all_artists=artists,logged_in = current_user.is_authenticated,login_id = current_user.id,current_page=page,total_pages=total_pages)
+
+    return render_template("dashboard.html", logged_in = current_user.is_authenticated)
+
+@app.route('/dashboard/artists/addartist',methods=['GET','POST'])
+@login_required
+def add_artist():
+    
+    if request.method == "POST":
+         
+        # try:
+            name=request.form.get('Name')
+
+            artist = artist_db.check_name_exists(name)
+
+            if artist:
+                flash("This name exists already!")
+
+                return redirect(url_for("add_artist"))
+
+            
+            
+            address = request.form["Address"]
+            first_release = request.form["first_release"]
+            date_of_birth = request.form["date_of_birth"]
+
+            gender = request.form["gender"]
+            number_albums = request.form["number_albums"]
+            
+            
+
+            artist_db.insert_data_artist(name,number_albums,first_release,date_of_birth,gender,address)
+
+            return redirect(url_for("get_all_artists"))
+
+    return render_template("addartist.html")
+
+@app.route('/dashboard/artist/delete/<int:artist_id>')
+@login_required
+def delete_artist(artist_id):
+    artist_db.delete_artist_query(artist_id)
+    return redirect(url_for('get_all_artists'))
+
+
+
+@app.route('/dashboard/artists/editartist/<int:artist_id>',methods=['GET','POST'])
+@login_required
+def edit_artist(artist_id):
+    
+    artist = artist_db.get_artist_data(artist_id)
+    print(artist)
+
+    if request.method == "POST":
+        name=artist['name']
+
+        
+
+            
+            
+        address = request.form["Address"]
+        first_release = request.form["first_release"]
+        date_of_birth = request.form["date_of_birth"]
+
+        gender = request.form["gender"]
+        number_albums = request.form["number_albums"]
+        
+        date_of_birth = artist['dob']
+       
+
+        artist_db.update_data_user(artist_id,name,number_albums,first_release,date_of_birth,gender,address)
+
+        return redirect(url_for("get_all_artists"))
+
+    
+    return render_template("editartist.html", artist=artist)
 
 
 if __name__=="__main__":
