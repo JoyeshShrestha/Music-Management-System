@@ -53,25 +53,6 @@ This is a Flask-based web application for managing users, artists, and music tra
 6. **Access the Application**:
     - Open a browser and go to: `http://127.0.0.1:5000`
 
-## Folder Structure
-```
-|-- app.py              # Main application file
-|-- db/                 # Database connection and helpers
-|   |-- get_db_connection.py
-|-- models/             # Models for database interactions
-|   |-- user_db.py
-|   |-- artist_db.py
-|   |-- music_db.py
-|-- templates/          # HTML templates
-|   |-- register.html
-|   |-- login.html
-|   |-- dashboard.html
-|   |-- user.html
-|   |-- artist.html
-|   |-- music.html
-|-- static/             # Static files (CSS, JS, images)
-```
-
 ## Routes
 
 ### Authentication
@@ -112,7 +93,7 @@ This is a Flask-based web application for managing users, artists, and music tra
 
 ## Key Files and Functions
 
-### `app.py`
+### `main.py`
 - **Routes**: Handles the application’s endpoints and logic.
 - **Authentication**:
   - `@login_manager.user_loader`: Loads the user by ID for Flask-Login.
@@ -134,18 +115,22 @@ Pagination is implemented in the following routes:
 - `/dashboard/artists`
 - `/dashboard/artists/<artist_id>/music`
 
-**Logic**:
-- Each route uses `page` and `per_page` query parameters.
-- Calculates total pages using `total_items` and `per_page`.
 
 ## Security Features
 - Passwords are hashed using `Werkzeug.security.generate_password_hash`.
 - Sessions are managed securely with `Flask-Login`.
 
 
-- Add testing for routes and database functions.
-- Enhance UI/UX with modern frameworks like Bootstrap or Tailwind CSS.
+## Screenshots
 
----
-Feel free to contribute or raise issues via GitHub!
+![Image](https://github.com/user-attachments/assets/6714397b-4602-421a-bfd8-f4e80ca16b12)
+
+![Image](https://github.com/user-attachments/assets/0489d7a1-aecb-48f1-9aae-06b580544fb0)
+
+![Image](https://github.com/user-attachments/assets/be597a6d-d854-4f48-9455-f17808387282)
+
+![image](https://github.com/user-attachments/assets/bc8ea79c-aa0f-4087-a782-f89f17e04a40)
+
+
+
 
