@@ -61,7 +61,8 @@ def load_user(user_id):
 
 @app.route('/',methods=['GET','POST'])
 def register():
-  
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
     if request.method == "POST":
          
         # try:
@@ -95,6 +96,8 @@ def register():
 
 @app.route('/login',methods=['GET','POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')

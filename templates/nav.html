@@ -1,12 +1,21 @@
 {% block content %}
 <nav class="nav">
   <h3 class="logo">TUNE</h3>
-  <ul>
-    <li><a href="{{url_for('dashboard')}}">Dashboard</a></li>
+  <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+  <ul class="nav-links">
+    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+    <li><a href="{{ url_for('get_all_users') }}">Users</a></li>
+    <li><a href="{{ url_for('get_all_artists') }}">Artists</a></li>
+    <li class="logout"><a href="{{ url_for('logout') }}">Logout</a></li>
 
-    <li><a href="{{url_for('get_all_users')}}">Users</a></li>
-    <li><a href="{{url_for('get_all_artists')}}">Artists</a></li>
   </ul>
-  <div class="logout"><a href="{{url_for('logout')}}">Logout</a></div>
+  
 </nav>
+<script>
+  function toggleMenu() {
+    const navLinks = document.querySelector('.nav-links');
+    navLinks.classList.toggle('show');
+  }
+</script>
+
 {% endblock %}

@@ -60,52 +60,59 @@ input {
 }
 input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); }
 
-
-
+/* General Styles */
 .nav {
-    display: flex;
-    justify-content: space-between; /* Ensures items are spaced evenly */
-    width: 100%;
-    background-color: #252525;
-    color: rgb(226, 226, 226);
-    padding: 10px 20px; /* Adds padding inside the navigation bar */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for aesthetics */
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Centers the logo and menu icon vertically */
+  width: 100%;
+  background-color: #252525;
+  color: rgb(226, 226, 226);
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative; /* Ensures proper positioning for absolute elements */
 }
 
-.nav ul {
-    display: flex;
-    list-style: none; /* Removes default bullet points from the list */
-    padding: 0;
-    margin: 0;
-	
+.nav .logo {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .nav li {
-    margin: 0 15px; /* Adds consistent spacing between navigation items */
-    display: flex;
-    align-items: center; /* Centers items vertically */
+  margin: 0 15px;
 }
 
 .nav a {
-    text-decoration: none; /* Removes underline from links */
-    color: rgb(225, 225, 225); /* Sets link color */
-    font-weight: 500; /* Makes the text slightly bold */
-	font-size: 1.2rem;
+  text-decoration: none;
+  color: rgb(225, 225, 225);
+  font-weight: 500;
+  font-size: 1.2rem;
 }
-
-
-
-
 
 .nav a:hover {
-    color: #1ED760; /* Optional: Change link color on hover */
-	text-decoration: underline;
-	text-decoration-thickness: 2px; 
-
-    transition: width 2s ease; /* Smooth animation effect */
-	
-
+  color: #1ED760;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  transition: color 0.3s ease;
 }
+
+/* Menu Icon (Visible on mobile) */
+.menu-icon {
+  display: none; /* Hidden by default */
+  font-size: 2rem;
+  cursor: pointer;
+  color: white;
+}
+
+
+
 
 .add_user_body{
   display: flex;
@@ -257,13 +264,37 @@ color:  #f5f5f5;
 	align-items: start;
   }
 
+
+  .user-img{
+              height: 200px;
+               position: relative; 
+                background-image: url('../assests/img/user.jpg');
+                background-size: cover; 
+                background-position: center; 
+                background-repeat: no-repeat;
+  }
+
+  .artist-img{
+    height: 200px;
+     position: relative; 
+      background-image: url('../assests/img/artist.jpg');
+      background-size: cover; 
+      background-position: center; 
+      background-repeat: no-repeat;
+}
   .user-title {
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 2rem;
+    font-weight:bold;
+    color: #f5f5f5;
+  }
+
+  .music-title{
+    font-size: 2rem;
+    font-weight: normal;
   }
 
   .user-subtitle {
-    font-size: 1.2rem;
+    font-size: 1.8rem;
     color: #666;
   }
 
@@ -272,11 +303,79 @@ color:  #f5f5f5;
     color: #666;
   }
 
+  .delete img{
+    cursor: pointer; 
+    width: 40px; 
+    height: auto;
+    color: #b60000;
+    margin-right: 5px;
+  }
+
+  .delete img:hover{
+    
+    transform: rotate(25deg);
+
+  }
+  .edit{
+    margin-right: 10px;
+  }
+  .edit img:hover{
+    
+    transform: rotate(-25deg);
+
+  }
+
+  .edit img{
+    position: relative;
+    cursor: pointer; 
+    width: 40px; 
+    height: auto;
+    color: #0021b6;
+    margin-right: 5px;
+
+  }
+
+  .icon{
+    position: relative;
+    cursor: pointer; 
+    width: 20px; 
+    height: auto;
+    color: #0021b6;
+    margin-right: 5px;
+  }
+
+
   @media (max-width: 768px) {
 	html, body{
 		overflow: auto; /* Ensure scrolling is enabled */
 		height: auto; /* Avoid restricting height */
 	}
+  .menu-icon {
+    display: block; /* Show the menu icon on mobile */
+}
+
+.nav-links {
+    display: none;
+    
+}
+
+.nav-links.show {
+    display: flex; /* Show the navigation links when toggled */
+    flex-direction: column; /* Stack the links vertically */
+    position: absolute; /* Position the menu below the nav bar */
+    top: 60px; /* Adjust as per your nav height */
+    right: 20px;
+    background-color: #252525;
+    width: 200px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+}
+
+.nav li {
+    margin: 10px 0; /* Add spacing between stacked links */
+}
+
+
     .user-preview {
       flex: 1 1 calc(100% - 32px); /* On smaller screens, cards take the full width */
       max-width: 100%; /* Ensures they fit the container */
@@ -292,6 +391,12 @@ color:  #f5f5f5;
 	.user-details {
 		font-size: 0.9rem; /* Reduce detail font size */
 	  }
+    .icon{
+      
+      width: 20px; 
+      height: auto;
+      
+    }
   }
 
   @media (max-width: 480px) {
@@ -299,12 +404,38 @@ color:  #f5f5f5;
 		overflow: auto; /* Ensure scrolling is enabled */
 		height: auto; /* Avoid restricting height */
 	}
+  .menu-icon {
+    display: block; /* Show the menu icon on mobile */
+}
+
+.nav-links {
+    display: none ; 
+    
+}
+
+.nav-links.show {
+    display: flex; 
+    flex-direction: column; /* Stack the links vertically */
+    position: absolute; /* Position the menu below the nav bar */
+    top: 60px; /* Adjust as per your nav height */
+    right: 20px;
+    background-color: #252525;
+    width: 200px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+}
+
+.nav li {
+    margin: 10px 0; /* Add spacing between stacked links */
+}
+
+
     .user-preview {
       padding: 12px; /* Reduce padding on smaller devices */
     }
 
     .user-title {
-      font-size: 1rem; /* Further reduce font size for very small screens */
+      font-size: 1.2rem; /* Further reduce font size for very small screens */
     }
 
     .user-subtitle {
@@ -313,4 +444,13 @@ color:  #f5f5f5;
 	.user-details {
 		font-size: 0.8rem; /* Reduce detail font size */
 	  }
+    .icon{
+      
+      width: 20px; 
+      height: auto;
+      
+    }
   }
+
+
+  

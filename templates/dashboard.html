@@ -1,16 +1,53 @@
-{% extends "base.html" %} {% block content %} 
- 
-<h2 class="mt-4"><span style="font-style: italic; color: #1ED760;">hello</span> {{user_email}},<span style="font-style: italic; color: #1ED760;"> welcome to <span class="logo" style="font-style:normal; font-size: 1.2rem ";> TUNE</span> Dashboard</span>   </h2>
-
-
-<div class="container justify-content-center">
-    <div class="row">
-        <a href="{{url_for('get_all_users')}}" style="text-decoration: none;"><div class="col selection_box mx-4 p-4">Users</div></a>
-        <div class="col selection_box mx-4 p-4">Artists</div>
-
+{% extends "base.html" %} {% block content %}
+<div class="add_user_body">
+  <div class="container" style="margin-top: 10px; padding-bottom: 100px">
+    <h2 class="mb-4">
+      <span style="font-style: italic; color: #1ed760">hello</span>
+      <span style="font-weight: light; font-size: 1rem;">{{user_email}},</span><span style="font-style: italic; color: #1ed760">
+        welcome to
+        <span class="logo" style="font-style: normal; font-size: 1.2rem" ;>
+          TUNE</span
+        ><span
+          style="
+            text-decoration: underline;
+            text-decoration-skip-ink: auto;
+            text-underline-offset: 8px;
+            text-decoration-thickness:1px;
+            text-decoration-color: #f5f5f5;
+          "
+        >
+          Dashboard</span
+        ></span
+      >
+    </h2>
+    <hr style="background-color: #058209; width: 100%;">
+    <p class="my-4">
+      <span style="font-style: italic"
+        >This is a Music Management System Assignment for Cloco created by
+        Joyesh</span
+      >
+    </p>
+    
+    <div class="row justify-content-center pt-5" style="gap: 10px">
+      <a href="{{url_for('get_all_users')}}" style="text-decoration: none">
+        <div
+          class="col selection_box mx-4 d-flex align-items-end justify-content-center user-img"
+          style="height: 200px; position: relative; border: 1px solid #058209"
+        >
+          <span style="font-size: 3rem; font-weight: 700">Users</span>
+        </div></a
+      >
+      <a href="{{url_for('get_all_artists')}}" style="text-decoration: none">
+        <div
+          class="col selection_box mx-4 d-flex align-items-end justify-content-center artist-img"
+          style="height: 200px; position: relative; border: 1px solid #058209"
+        >
+          <span style="font-size: 3rem; font-weight: 700;">Artists</span>
+        </div></a
+      >
     </div>
+  </div>
+  <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROuBNBcOFFjXIkz4EkF_AyxysJil8Vldwb-Q&usqp=CAU" alt="album art" class="art"> -->
 </div>
-<!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROuBNBcOFFjXIkz4EkF_AyxysJil8Vldwb-Q&usqp=CAU" alt="album art" class="art"> -->
-
 
 {% endblock%}

@@ -9,7 +9,7 @@
 {% with messages= get_flashed_messages()%} {%if messages%}
 <p>{{messages[-1]}}</p>
 {%endif%} {%endwith%}
-  <div class="mb-4">
+  <p class="mb-4">
     {% if current_page > 1 %}
       <a class="btn btn-small btn-outline-dark" href="{{ url_for('get_all_artists', page=current_page - 1) }}">Previous</a>
     {% endif %}
@@ -17,22 +17,27 @@
     {% if current_page < total_pages %}
     <a class="btn btn-small btn-outline-dark" href="{{ url_for('get_all_artists', page=current_page + 1) }}">Next</a>
   {% endif %}
-     </div>
+  </p>
 <div class="display_user">
         
          {% for artist in all_artists %}
          <div class="user-preview">
-           <p class="user-title">{{ artist.name }}</p>
-           <p class="user-subtitle">{{ artist.first_release_year }}</p>
-           <p class="user-details"><strong>No. of Albums:</strong> {{ artist.no_of_albums_released}}</p>
+           <div class="user-title">{{ artist.name }}</div>
+           <hr style="background-color: #058209">
 
-           <p class="user-details"><strong>Address:</strong> {{ artist.address }}</p>
-           <p class="user-details"><strong>Gender:</strong> {{ artist.gender }}</p>
-           <p class="user-details"><strong>Date of Birth:</strong> {{ artist.dob }}</p>
-        
-           <p>
-            <a class="btn btn-outline-primary" href="{{ url_for('edit_artist',artist_id=artist.id)}}">Edit</a>
-          <a class="btn btn-outline-danger"  href="{{url_for('delete_artist',artist_id=artist.id)}}">Delete</a>
+           <div class="user-details mt-2" style="display: flex; justify-content: space-between;"><span><strong>First Release Year:</strong> {{ artist.first_release_year }}</span>
+           <span><strong>No. of Albums:</strong> {{ artist.no_of_albums_released}}</span></div>
+
+           <div class="user-details"><strong>Address:</strong> {{ artist.address }}</div>
+           <div class="user-details"><strong>Gender:</strong> {{ artist.gender }}</div>
+           <div class="user-details"><strong>Date of Birth:</strong> {{ artist.dob }}</div>
+           <hr style="background-color: #058209">
+           <p style="display: flex; justify-content: space-between;">
+            <span><a class="edit" href="{{ url_for('edit_artist',artist_id=artist.id)}}"><img src="/static/assests/img/eDit.png" alt="edit"></a>
+            <a class="delete" href="{{url_for('delete_artist',artist_id=artist.id)}}">
+              <img src="/static/assests/img/delete.png" alt="Delete">
+            </a>  </span>
+    
           <a class="btn btn-outline-light"  href="{{url_for('get_all_musics',artist_id=artist.id)}}">Music</a>
 
         </p>
@@ -45,7 +50,7 @@
   
     
   </div>
-  <div class="mt-4">
+  <p class="mt-4">
     {% if current_page > 1 %}
       <a class="btn btn-small btn-outline-dark" href="{{ url_for('get_all_artists', page=current_page - 1) }}">Previous</a>
     {% endif %}
@@ -53,6 +58,6 @@
     {% if current_page < total_pages %}
     <a class="btn btn-small btn-outline-dark" href="{{ url_for('get_all_artists', page=current_page + 1) }}">Next</a>
   {% endif %}
-     </div>
+  </p>
 </div>
 {% endblock %}
